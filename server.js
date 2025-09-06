@@ -8,6 +8,7 @@ dotenv.config();
 
 // Import routes
 const bookRoutes = require('./routes/bookRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // Initialize Express app
 const app = express();
@@ -36,6 +37,8 @@ mongoose.connect(mongoURI)
 // --- API Routes ---
 // Use the book routes for any requests to /api/books
 app.use('/api/books', bookRoutes);
+app.use('/api/auth', authRoutes);
+
 
 // Simple route for the root URL to confirm the server is running
 app.get('/', (req, res) => {
