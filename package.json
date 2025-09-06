@@ -1,0 +1,26 @@
+{
+  "name": "library-api",
+  "version": "1.0.0",
+  "description": "A simple REST API for a Library Management System.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "api",
+    "express",
+    "mongodb",
+    "nodejs"
+  ],
+  "author": "Full Stack Intern",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.2"
+  }
+}
