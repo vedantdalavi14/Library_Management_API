@@ -16,6 +16,7 @@
   "author": "Full Stack Intern",
   "license": "ISC",
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
