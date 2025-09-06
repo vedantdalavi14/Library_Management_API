@@ -1,134 +1,292 @@
 {
 	"info": {
-		"_postman_id": "c622d6e7-1c6e-4c7a-b2f5-d5e0d4c185e4",
+		"_postman_id": "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6d",
 		"name": "Library Management System",
-		"description": "A collection of API requests for the Library Management System.",
+		"description": "A collection of API requests for the Library Management System, including authentication and role-based access.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Add New Book",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"title\": \"The Hitchhiker's Guide to the Galaxy\",\n    \"author\": \"Douglas Adams\",\n    \"isbn\": \"978-0345391803\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+			"name": "Authentication",
+			"description": "Endpoints for user registration and login.",
+			"item": [
+				{
+					"name": "Register Admin User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"adminuser\",\n    \"password\": \"password123\",\n    \"role\": \"Admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registers a new user with the 'Admin' role. The response will contain a JWT token."
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:5000/api/books",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"books"
-					]
+				{
+					"name": "Register Member User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"memberuser\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registers a new user with the default 'Member' role."
+					},
+					"response": []
 				},
-				"description": "Adds a new book to the library collection. The `isAvailable` field defaults to `true`."
-			},
-			"response": []
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"adminuser\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in a user and returns a JWT token. Copy this token to use in protected routes."
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Get All Books",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5000/api/books",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"books"
-					]
+			"name": "Books",
+			"description": "Endpoints for managing books.",
+			"item": [
+				{
+					"name": "Add New Book (Protected - Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Dune\",\n    \"author\": \"Frank Herbert\",\n    \"isbn\": \"978-0441013593\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"books"
+							]
+						},
+						"description": "Adds a new book. Requires a valid JWT from an **Admin** user. Paste the token from the login response into the Authorization tab."
+					},
+					"response": []
 				},
-				"description": "Fetches a list of all books in the database, regardless of their availability."
-			},
-			"response": []
+				{
+					"name": "Get All Books (Public)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"books"
+							]
+						},
+						"description": "Fetches a list of all books in the database. This endpoint is public."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Books (Public)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/books?status=available",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"books"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "available"
+								}
+							]
+						},
+						"description": "Fetches only the books that are currently available for borrowing. This endpoint is public."
+					},
+					"response": []
+				},
+				{
+					"name": "Borrow a Book (Protected)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/books/YOUR_BOOK_ID/borrow",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"books",
+								"YOUR_BOOK_ID",
+								"borrow"
+							]
+						},
+						"description": "Marks a book as borrowed. Requires a valid JWT from **any logged-in user**. \n\n**IMPORTANT:** Replace `YOUR_BOOK_ID` in the URL with a real book ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Return a Book (Protected)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/books/YOUR_BOOK_ID/return",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"books",
+								"YOUR_BOOK_ID",
+								"return"
+							]
+						},
+						"description": "Marks a book as returned. Requires a valid JWT from **any logged-in user**.\n\n**IMPORTANT:** Replace `YOUR_BOOK_ID` in the URL with a real book ID."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": []
+			}
 		},
 		{
-			"name": "Get Available Books",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5000/api/books?status=available",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"books"
-					],
-					"query": [
-						{
-							"key": "status",
-							"value": "available"
-						}
-					]
-				},
-				"description": "Fetches only the books that are currently available for borrowing (`isAvailable` is true)."
-			},
-			"response": []
-		},
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": []
+			}
+		}
+	],
+	"variable": [
 		{
-			"name": "Borrow a Book",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5000/api/books/665f8a9b3e1f4d2f8e9c0b1a/borrow",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"books",
-						"665f8a9b3e1f4d2f8e9c0b1a",
-						"borrow"
-					]
-				},
-				"description": "Marks a book as borrowed by setting `isAvailable` to `false`. **Remember to replace the book ID in the URL with a valid one from your database.**"
-			},
-			"response": []
-		},
-		{
-			"name": "Return a Book",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5000/api/books/665f8a9b3e1f4d2f8e9c0b1a/return",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"books",
-						"665f8a9b3e1f4d2f8e9c0b1a",
-						"return"
-					]
-				},
-				"description": "Marks a book as returned by setting `isAvailable` to `true`. **Remember to replace the book ID in the URL with a valid one from your database.**"
-			},
-			"response": []
+			"key": "jwt_token",
+			"value": "paste_your_token_here"
 		}
 	]
 }
+

@@ -1,7 +1,3 @@
-git clone <repository-url>
-cd library-api
-
-
 # 📚 Library Management System API
 
 A simple REST API for a Library Management System, built with **Node.js**, **Express**, and **MongoDB**. It allows users to manage a collection of books and includes JWT-based authentication with user roles.
@@ -101,15 +97,66 @@ This project was created as part of a take-home assignment for a Full Stack Deve
 
 ---
 
-## 🧪 How to Test with Postman
-1. **Import the Collection:** Import the `Library-Management-System.postman_collection.json` file into Postman.
-2. **Register and Login:**
-    - Use the `/api/auth/register` request to create a new user. To create an admin, include `"role": "Admin"` in the body.
-    - Use the `/api/auth/login` request with your new user's credentials.
-    - Copy the token from the login response body.
-3. **Test a Protected Route:**
-    - Select a protected request (e.g., `POST /api/books`).
-    - Go to the Authorization tab.
-    - Select Type: **Bearer Token**.
-    - In the Token field, paste the token you copied.
-    - Send the request. It should now be successful. If you try without the token, you will get a 401 Unauthorized error.
+---
+
+## 🔐 How User Roles and Route Protection Work
+
+The API uses middleware to control access based on user roles:
+
+- **Adding a Book (Admin Only):**
+    ```js
+    router.post('/', protect, authorize('Admin'), addBook);
+    ```
+    - `protect`: Checks if the user is logged in (valid token).
+    - `authorize('Admin')`: Checks if the logged-in user's role is 'Admin'.
+    - **Result:** Only Admins can add books. Members get a 403 Forbidden error.
+
+- **Getting All Books (Public):**
+    ```js
+    router.get('/', getAllBooks);
+    ```
+    - No authentication or role check. Anyone can access this endpoint.
+
+- **Borrowing and Returning Books (Admin & Member):**
+    ```js
+    router.patch('/:id/borrow', protect, borrowBook);
+    router.patch('/:id/return', protect, returnBook);
+    ```
+    - `protect`: Checks if the user is logged in, but does not check for a specific role.
+    - **Result:** Any logged-in user (Admin or Member) can borrow or return books.
+
+---
+
+## 🧪 How to Test User Roles in Postman
+
+1. **Create Two Users:**
+     - **Admin:**
+         ```json
+         {
+             "username": "adminuser",
+             "password": "password123",
+             "role": "Admin"
+         }
+         ```
+     - **Member:**
+         ```json
+         {
+             "username": "memberuser",
+             "password": "password123"
+         }
+         ```
+
+2. **Test Admin-Only Route:**
+     - Log in as the Admin (`POST /api/auth/login`) and copy the JWT token.
+     - Go to the Add New Book (`POST /api/books`) request. In the Authorization tab, select **Bearer Token** and paste the Admin's token.
+     - Send the request. It should succeed (Status 201).
+
+3. **Test Member Restriction:**
+     - Log in as the Member and copy their JWT token.
+     - Go back to the Add New Book request and replace the Admin's token with the Member's token.
+     - Send the request. It should fail (Status 403 Forbidden). This proves your role-based security is working correctly.
+
+4. **Test Shared Route (Borrow):**
+     - Using the Member's token, go to the Borrow a Book request (`PATCH /api/books/:id/borrow`).
+     - Replace `:id` in the URL with the ID of a book that the Admin created.
+     - Send the request. It should succeed. This shows that Members can perform actions that don't require Admin privileges.
