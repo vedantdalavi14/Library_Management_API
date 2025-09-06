@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "c622d6e7-1c6e-4c7a-b2f5-d5e0d4c185e4",
+		"name": "Library Management System",
+		"description": "A collection of API requests for the Library Management System.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add New Book",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"The Hitchhiker's Guide to the Galaxy\",\n    \"author\": \"Douglas Adams\",\n    \"isbn\": \"978-0345391803\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"books"
+					]
+				},
+				"description": "Adds a new book to the library collection. The `isAvailable` field defaults to `true`."
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"books"
+					]
+				},
+				"description": "Fetches a list of all books in the database, regardless of their availability."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Available Books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/books?status=available",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "available"
+						}
+					]
+				},
+				"description": "Fetches only the books that are currently available for borrowing (`isAvailable` is true)."
+			},
+			"response": []
+		},
+		{
+			"name": "Borrow a Book",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/books/665f8a9b3e1f4d2f8e9c0b1a/borrow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"books",
+						"665f8a9b3e1f4d2f8e9c0b1a",
+						"borrow"
+					]
+				},
+				"description": "Marks a book as borrowed by setting `isAvailable` to `false`. **Remember to replace the book ID in the URL with a valid one from your database.**"
+			},
+			"response": []
+		},
+		{
+			"name": "Return a Book",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/books/665f8a9b3e1f4d2f8e9c0b1a/return",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"books",
+						"665f8a9b3e1f4d2f8e9c0b1a",
+						"return"
+					]
+				},
+				"description": "Marks a book as returned by setting `isAvailable` to `true`. **Remember to replace the book ID in the URL with a valid one from your database.**"
+			},
+			"response": []
+		}
+	]
+}
