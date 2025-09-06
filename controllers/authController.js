@@ -2,9 +2,10 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-// Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+// --- MODIFIED FUNCTION ---
+// Now accepts the user object to include the role in the token
+const generateToken = (user) => {
+  return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
@@ -15,7 +16,10 @@ exports.register = async (req, res) => {
     try {
         const { username, password, role } = req.body;
         const user = await User.create({ username, password, role });
-        const token = generateToken(user._id);
+        
+        // Pass the full user object to generate the token
+        const token = generateToken(user);
+
         res.status(201).json({ success: true, token });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -35,8 +39,11 @@ exports.login = async (req, res) => {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
+        
+        // --- MODIFIED LINE ---
+        // Pass the full user object to generate the token
+        const token = generateToken(user);
 
-        const token = generateToken(user._id);
         res.status(200).json({ success: true, token });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server Error' });

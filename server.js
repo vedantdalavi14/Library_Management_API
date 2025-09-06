@@ -1,7 +1,9 @@
+
 // Import required modules
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cors = require('cors'); // <-- ADD THIS LINE
 
 // Load environment variables from .env file
 dotenv.config();
@@ -13,7 +15,8 @@ const authRoutes = require('./routes/authRoutes');
 // Initialize Express app
 const app = express();
 
-// Middleware to parse JSON bodies
+// Middleware
+app.use(cors()); // <-- ADD THIS LINE
 app.use(express.json());
 
 // --- Database Connection ---
