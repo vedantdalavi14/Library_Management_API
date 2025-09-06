@@ -1,8 +1,6 @@
 // Import required modules
 const express = require('express');
 const router = express.Router();
-
-// Import controller functions
 const {
   addBook,
   getAllBooks,
@@ -10,23 +8,18 @@ const {
   returnBook
 } = require('../controllers/bookController');
 
-// --- Route Definitions ---
+// Import middleware
+const { protect, authorize } = require('../middleware/authMiddleware');
 
-// @route   POST /api/books
-// @desc    Add a new book
-router.post('/', addBook);
+// Only an Admin can add a book
+router.post('/', protect, authorize('Admin'), addBook);
 
-// @route   GET /api/books
-// @desc    Get all books (can be filtered by availability)
+// Anyone can get books
 router.get('/', getAllBooks);
 
-// @route   PATCH /api/books/:id/borrow
-// @desc    Borrow a book
-router.patch('/:id/borrow', borrowBook);
-
-// @route   PATCH /api/books/:id/return
-// @desc    Return a book
-router.patch('/:id/return', returnBook);
+// Any authenticated user can borrow or return
+router.patch('/:id/borrow', protect, borrowBook);
+router.patch('/:id/return', protect, returnBook);
 
 // Export the router
 module.exports = router;

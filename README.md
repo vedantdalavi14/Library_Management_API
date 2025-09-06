@@ -1,24 +1,29 @@
 git clone <repository-url>
 cd library-api
 
+
 # 📚 Library Management System API
 
-A simple REST API for managing a library's book collection, built with **Node.js**, **Express**, and **MongoDB**. This project was created as part of a take-home assignment for a Full Stack Development internship.
+A simple REST API for a Library Management System, built with **Node.js**, **Express**, and **MongoDB**. It allows users to manage a collection of books and includes JWT-based authentication with user roles.
+
+This project was created as part of a take-home assignment for a Full Stack Development internship.
 
 ---
 
 ## 🚀 Features
-- Add new books to the library
-- Fetch a list of all books
+- User registration and login with JWT authentication
+- Role-based access control (**Admin**, **Member**)
+- **Admin:** Can add new books
+- **Member / Admin:** Can borrow and return books
+- Fetch a list of all books (publicly accessible)
 - Filter and fetch only available books
-- Borrow a book (updates its status to unavailable)
-- Return a book (updates its status to available)
 
 ---
 
 ## 🛠️ Technologies Used
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB (with Mongoose ODM)
+- **Authentication:** JSON Web Tokens (JWT), bcryptjs
 - **API Testing:** Postman
 
 ---
@@ -27,6 +32,7 @@ A simple REST API for managing a library's book collection, built with **Node.js
 ```
 /library-api
 │-- /controllers      # Logic for handling requests
+│-- /middleware       # Auth middleware for protecting routes
 │-- /models           # Mongoose schemas for database models
 │-- /routes           # API route definitions
 │-- .env              # Environment variables
@@ -44,86 +50,66 @@ A simple REST API for managing a library's book collection, built with **Node.js
 ### Prerequisites
 - Node.js (v14 or later)
 - npm (Node Package Manager)
-- MongoDB (local or cloud, e.g., MongoDB Atlas)
+- MongoDB (either a local instance or a cloud-based service like MongoDB Atlas)
 - Postman (for API testing)
 
 ### Installation Steps
-
 1. **Clone the repository:**
-     ```sh
-     git clone <repository-url>
-     cd library-api
-     ```
-
+    ```sh
+    git clone https://github.com/vedantdalavi14/Library_Management_API
+    cd Library_Management_API
+    ```
 2. **Install dependencies:**
-     ```sh
-     npm install
-     ```
-
+    ```sh
+    npm install
+    ```
 3. **Create a `.env` file:**
-     Create a file named `.env` in the root of your project and add the following content:
-     ```env
-     PORT=5000
-     MONGO_URI=<your_mongodb_connection_string>
-     ```
-     Replace `<your_mongodb_connection_string>` with your actual MongoDB connection URI.
-
+    Create a file named `.env` in the root of your project and add the following content:
+    ```env
+    PORT=5000
+    MONGO_URI=<your_mongodb_connection_string>
+    JWT_SECRET=<your_jwt_secret_key>
+    ```
+    - Replace `<your_mongodb_connection_string>` with your actual MongoDB connection URI.
+    - Replace `<your_jwt_secret_key>` with a long, random, secret string for signing tokens.
 4. **Start the development server:**
-     ```sh
-     npm run dev
-     ```
-     The server should now be running at [http://localhost:5000](http://localhost:5000).
+    ```sh
+    npm run dev
+    ```
+    The server should now be running at [http://localhost:5000](http://localhost:5000).
 
 ---
 
 ## 📚 API Endpoints
 
-The base URL for all endpoints is `/api/books`.
+### Authentication (`/api/auth`)
 
-| Method | Endpoint           | Description                      |
-|--------|--------------------|----------------------------------|
-| POST   | `/`                | Add a new book                   |
-| GET    | `/`                | Get a list of all books          |
-| GET    | `/?status=available` | Get only available books         |
-| PATCH  | `/:id/borrow`      | Borrow a book by its ID          |
-| PATCH  | `/:id/return`      | Return a book by its ID          |
+| Method | Endpoint    | Description                        | Access  |
+|--------|-------------|------------------------------------|---------|
+| POST   | /register   | Register a new user (defaults to 'Member'). | Public  |
+| POST   | /login      | Login to get a JWT.                | Public  |
 
----
+### Books (`/api/books`)
 
-### 1. Add a New Book
-- **Method:** POST
-- **URL:** `/api/books`
-- **Body (JSON):**
-    ```json
-    {
-        "title": "The Lord of the Rings",
-        "author": "J.R.R. Tolkien",
-        "isbn": "978-0618640157"
-    }
-    ```
-
-### 2. Get All Books
-- **Method:** GET
-- **URL:** `/api/books`
-
-### 3. Get Available Books
-- **Method:** GET
-- **URL:** `/api/books?status=available`
-
-### 4. Borrow a Book
-- **Method:** PATCH
-- **URL:** `/api/books/:id/borrow`
-    - Replace `:id` with the actual ID of the book you want to borrow.
-
-### 5. Return a Book
-- **Method:** PATCH
-- **URL:** `/api/books/:id/return`
-    - Replace `:id` with the actual ID of the book you want to return.
+| Method | Endpoint           | Description                      | Access         |
+|--------|--------------------|----------------------------------|----------------|
+| POST   | /                  | Add a new book                   | Admin          |
+| GET    | /                  | Get a list of all books          | Public         |
+| GET    | /?status=available | Get only available books         | Public         |
+| PATCH  | /:id/borrow        | Borrow a book by its ID          | Member / Admin |
+| PATCH  | /:id/return        | Return a book by its ID          | Member / Admin |
 
 ---
 
 ## 🧪 How to Test with Postman
-1. Open Postman.
-2. Click on **Import → File → Upload Files**.
-3. Select the `Library-Management-System.postman_collection.json` file from the project directory.
-4. A new collection named **Library Management System** will appear. You can now use the pre-configured requests to test all the API endpoints.
+1. **Import the Collection:** Import the `Library-Management-System.postman_collection.json` file into Postman.
+2. **Register and Login:**
+    - Use the `/api/auth/register` request to create a new user. To create an admin, include `"role": "Admin"` in the body.
+    - Use the `/api/auth/login` request with your new user's credentials.
+    - Copy the token from the login response body.
+3. **Test a Protected Route:**
+    - Select a protected request (e.g., `POST /api/books`).
+    - Go to the Authorization tab.
+    - Select Type: **Bearer Token**.
+    - In the Token field, paste the token you copied.
+    - Send the request. It should now be successful. If you try without the token, you will get a 401 Unauthorized error.
