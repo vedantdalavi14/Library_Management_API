@@ -16,8 +16,10 @@
   "author": "Full Stack Intern",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.1"
   },
   "devDependencies": {
