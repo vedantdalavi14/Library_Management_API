@@ -16,6 +16,21 @@ This project was created as part of a take-home assignment for a Full Stack Deve
 
 ---
 
+## 🎨 Frontends
+
+This repository contains two frontend applications to interact with the API:
+
+1.  **`library-frontend_html-react`**:
+    *   A lightweight, single-file frontend built with **HTML and embedded React** (via CDN scripts).
+    *   This version is designed for quick, simple demonstrations and does not require a separate build step. You can open the `index.html` file directly in a browser.
+
+2.  **`library-frontend_react`**:
+    *   A modern, full-featured frontend built with **React and Vite**.
+    *   This is the primary, recommended frontend, offering a better development experience, performance, and scalability.
+    *   It requires a separate installation and build process.
+
+---
+
 ## 🛠️ Technologies Used
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB (with Mongoose ODM)
